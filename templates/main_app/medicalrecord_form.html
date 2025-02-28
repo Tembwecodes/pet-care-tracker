@@ -1,0 +1,15 @@
+<!-- templates/main_app/medicalrecord_form.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container">
+    <h1>{% if object %}Update Medical Record{% else %}Add Medical Record{% endif %}</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="{% if object %}Update Record{% else %}Add Record{% endif %}" class="btn">
+    </form>
+    
+    <a href="{% url 'pets_detail' object.pet.id %}" class="btn btn-cancel">Cancel</a>
+</div>
+{% endblock %}

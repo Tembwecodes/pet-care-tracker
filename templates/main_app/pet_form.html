@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container">
+    <h1>{% if object %}Update {{ object.name }}{% else %}Add New Pet{% endif %}</h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="{% if object %}Update Pet{% else %}Add Pet{% endif %}" class="btn">
+    </form>
+    
+    {% if object %}
+        <a href="{% url 'pets_detail' object.id %}" class="btn btn-cancel">Cancel</a>
+    {% else %}
+        <a href="{% url 'pets_index' %}" class="btn btn-cancel">Cancel</a>
+    {% endif %}
+</div>
+{% endblock %}

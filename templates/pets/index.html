@@ -1,0 +1,30 @@
+<!-- templates/pets/index.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1>My Pets</h1>
+
+<div class="pet-list">
+    {% for pet in pets %}
+        <div class="card pet-card">
+            <div class="pet-info">
+                {% if pet.profile_picture %}
+                    <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}" class="pet-thumbnail">
+                {% else %}
+                    <div class="pet-thumbnail placeholder">{{ pet.name.0 }}</div>
+                {% endif %}
+                <div>
+                    <h2>{{ pet.name }}</h2>
+                    <p>{{ pet.species }} • {{ pet.breed }}</p>
+                </div>
+            </div>
+            <a href="{% url 'pets_detail' pet.id %}" class="btn">View Details</a>
+        </div>
+    {% empty %}
+        <div class="no-pets">
+            <p>You haven't added any pets yet!</p>
+        </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'pets_create' %}" class="btn add-pet-btn">Add a New Pet</a>
+{% endblock %}

@@ -229,5 +229,119 @@ class MedicalRecordDelete(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return f'/pets/{self.object.pet.id}/'
 
+# main_app/views.py
+# Add these class-based views after the MedicalRecordDelete class
+
+class VaccinationUpdate(LoginRequiredMixin, UpdateView):
+    model = Vaccination
+    fields = ['vaccine_name', 'date_administered', 'next_due_date', 'administered_by', 'notes']
+    
+    def dispatch(self, request, *args, **kwargs):
+        vaccination = self.get_object()
+        if vaccination.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class VaccinationDelete(LoginRequiredMixin, DeleteView):
+    model = Vaccination
+    
+    def dispatch(self, request, *args, **kwargs):
+        vaccination = self.get_object()
+        if vaccination.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class FeedingScheduleUpdate(LoginRequiredMixin, UpdateView):
+    model = FeedingSchedule
+    fields = ['food_type', 'amount', 'frequency', 'time_of_day', 'notes']
+    
+    def dispatch(self, request, *args, **kwargs):
+        schedule = self.get_object()
+        if schedule.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class FeedingScheduleDelete(LoginRequiredMixin, DeleteView):
+    model = FeedingSchedule
+    
+    def dispatch(self, request, *args, **kwargs):
+        schedule = self.get_object()
+        if schedule.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class MedicationUpdate(LoginRequiredMixin, UpdateView):
+    model = Medication
+    fields = ['medication_name', 'dosage', 'start_date', 'end_date', 'frequency', 'time_of_day', 'notes']
+    
+    def dispatch(self, request, *args, **kwargs):
+        medication = self.get_object()
+        if medication.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class MedicationDelete(LoginRequiredMixin, DeleteView):
+    model = Medication
+    
+    def dispatch(self, request, *args, **kwargs):
+        medication = self.get_object()
+        if medication.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class TrainingProgressUpdate(LoginRequiredMixin, UpdateView):
+    model = TrainingProgress
+    fields = ['skill', 'status', 'start_date', 'notes']
+    
+    def dispatch(self, request, *args, **kwargs):
+        progress = self.get_object()
+        if progress.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class TrainingProgressDelete(LoginRequiredMixin, DeleteView):
+    model = TrainingProgress
+    
+    def dispatch(self, request, *args, **kwargs):
+        progress = self.get_object()
+        if progress.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
+
+class PhotoDelete(LoginRequiredMixin, DeleteView):
+    model = Photo
+    
+    def dispatch(self, request, *args, **kwargs):
+        photo = self.get_object()
+        if photo.pet.user != self.request.user:
+            return redirect('pets_index')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_success_url(self):
+        return f'/pets/{self.object.pet.id}/'
 # Similar Update/Delete classes for other models (Vaccination, FeedingSchedule, etc.)
 # For brevity, I'm only showing MedicalRecord, but you'd create similar classes for each model

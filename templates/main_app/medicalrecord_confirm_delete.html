@@ -1,0 +1,17 @@
+<!-- templates/main_app/medicalrecord_confirm_delete.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container delete-confirm">
+    <h1>Delete Medical Record</h1>
+    
+    <p>Are you sure you want to delete this medical record?</p>
+    <p><strong>Type:</strong> {{ object.record_type }}</p>
+    <p><strong>Date:</strong> {{ object.record_date }}</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Yes, Delete" class="btn btn-danger">
+        <a href="{% url 'pets_detail' object.pet.id %}" class="btn">Cancel</a>
+    </form>
+</div>
+{% endblock %}
