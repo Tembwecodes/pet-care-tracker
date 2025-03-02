@@ -1,15 +1,37 @@
-<!-- templates/registration/login.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div class="auth-form">
-    <h1>Log In</h1>
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Log In" class="btn">
-    </form>
-    
-    <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
+<div class="auth-container">
+    <div class="auth-form">
+        <h1>Welcome Back</h1>
+        <p class="intro">Log in to manage your pets' information</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="submit-btn">Log In</button>
+        </form>
+        
+        <div class="auth-alternate">
+            Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+        </div>
+        
+        <!-- Decorative elements -->
+        <div class="auth-form-decoration decoration-top-right"></div>
+        <div class="auth-form-decoration decoration-bottom-left"></div>
+    </div>
 </div>
 {% endblock %}

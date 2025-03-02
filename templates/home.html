@@ -1,4 +1,3 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 {% block content %}
 <section class="hero">
@@ -15,31 +14,36 @@
 <section class="features">
     <h2>Features</h2>
     <div class="feature-cards">
-        <!-- Wrap each card in an anchor tag -->
-        <a href="{% url 'pets_index' %}" class="card">
+        <div class="feature-card">
+            <div class="feature-icon">📋</div>
             <h3>Medical Records</h3>
-            <p>Keep track of vet visits, diagnoses, and treatments.</p>
-        </a>
-        <a href="{% url 'pets_index' %}" class="card">
+            <p>Keep track of vet visits, diagnoses, and treatments all in one place. Never lose important medical information again.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💉</div>
             <h3>Vaccinations</h3>
-            <p>Record vaccinations and never miss a booster shot.</p>
-        </a>
-        <a href="{% url 'pets_index' %}" class="card">
+            <p>Record vaccinations and receive reminders before booster shots are due. Stay on top of your pet's immunization schedule.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🍽️</div>
             <h3>Feeding Schedule</h3>
-            <p>Maintain consistent feeding times and amounts.</p>
-        </a>
-        <a href="{% url 'pets_index' %}" class="card">
+            <p>Maintain consistent feeding times and track portion sizes. Create a healthy routine for your pets.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💊</div>
             <h3>Medications</h3>
-            <p>Track current medications, dosages, and schedules.</p>
-        </a>
-        <a href="{% url 'pets_index' %}" class="card">
+            <p>Track current medications, dosages, and schedules to ensure your pet receives proper treatment on time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
             <h3>Training Progress</h3>
-            <p>Monitor your pet's training achievements.</p>
-        </a>
-        <a href="{% url 'pets_index' %}" class="card">
+            <p>Monitor your pet's training achievements with visual progress tracking. Celebrate their successes!</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📸</div>
             <h3>Photo Gallery</h3>
-            <p>Save precious memories of your furry friends.</p>
-        </a>
+            <p>Save precious memories of your furry friends with a dedicated photo gallery for each pet.</p>
+        </div>
     </div>
 </section>
 {% endblock %}

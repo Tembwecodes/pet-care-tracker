@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container">
+    <h1>{% if object %}Update Vaccination{% else %}Add Vaccination{% endif %}</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="{% if object %}Update Vaccination{% else %}Add Vaccination{% endif %}" class="btn">
+    </form>
+    
+    <a href="{% url 'pets_detail' object.pet.id %}" class="btn btn-cancel">Cancel</a>
+</div>
+{% endblock %}

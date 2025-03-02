@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container delete-confirm">
+    <h1>Delete {{ object.name }}</h1>
+    
+    <p>Are you sure you want to delete {{ object.name }}?</p>
+    <p class="warning">This will also delete all related records, including medical records, vaccinations, and photos.</p>
+    
+    <div class="confirmation-details">
+        <p><strong>Pet:</strong> {{ object.name }}</p>
+        <p><strong>Species:</strong> {{ object.species }}</p>
+        <p><strong>Breed:</strong> {{ object.breed }}</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <input type="submit" value="Yes, Delete" class="btn btn-danger">
+            <a href="{% url 'pets_detail' object.id %}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .warning {
+        color: #ef4444;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    .confirmation-details {
+        background-color: #f9fafb;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+</style>
+{% endblock %}
