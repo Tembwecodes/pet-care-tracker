@@ -1,5 +1,6 @@
 # main_app/views.py
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout as auth_logout
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
@@ -7,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Pet, MedicalRecord, Vaccination, FeedingSchedule, Medication, TrainingProgress, Photo
 from .forms import MedicalRecordForm, VaccinationForm, FeedingScheduleForm, MedicationForm, TrainingProgressForm, PhotoForm
+from datetime import date, timedelta
 
 def home(request):
     return render(request, 'home.html')
@@ -35,6 +37,11 @@ def pets_detail(request, pet_id):
     training_progress = pet.trainingprogress_set.all()
     photos = pet.photo_set.all()
     
+    # Add these date variables for reminders
+    today = date.today()
+    today_plus_7 = today + timedelta(days=7)
+    today_plus_30 = today + timedelta(days=30)
+    
     # Forms for adding new related objects
     medical_record_form = MedicalRecordForm()
     vaccination_form = VaccinationForm()
@@ -56,7 +63,10 @@ def pets_detail(request, pet_id):
         'feeding_schedule_form': feeding_schedule_form,
         'medication_form': medication_form,
         'training_progress_form': training_progress_form,
-        'photo_form': photo_form
+        'photo_form': photo_form,
+        'today': today,
+        'today_plus_7': today_plus_7,
+        'today_plus_30': today_plus_30
     }
     
     return render(request, 'pets/detail.html', context)
@@ -69,6 +79,10 @@ class PetCreate(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+        
+    def form_invalid(self, form):
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
 
 class PetUpdate(LoginRequiredMixin, UpdateView):
     model = Pet
@@ -203,6 +217,8 @@ def add_photo(request, pet_id):
     
     return redirect('pets_detail', pet_id=pet_id)
 
+
+
 # Generic Update and Delete Views for Related Models
 class MedicalRecordUpdate(LoginRequiredMixin, UpdateView):
     model = MedicalRecord
@@ -228,9 +244,6 @@ class MedicalRecordDelete(LoginRequiredMixin, DeleteView):
     
     def get_success_url(self):
         return f'/pets/{self.object.pet.id}/'
-
-# main_app/views.py
-# Add these class-based views after the MedicalRecordDelete class
 
 class VaccinationUpdate(LoginRequiredMixin, UpdateView):
     model = Vaccination
@@ -343,5 +356,7 @@ class PhotoDelete(LoginRequiredMixin, DeleteView):
     
     def get_success_url(self):
         return f'/pets/{self.object.pet.id}/'
-# Similar Update/Delete classes for other models (Vaccination, FeedingSchedule, etc.)
-# For brevity, I'm only showing MedicalRecord, but you'd create similar classes for each model
+
+def logout_view(request):
+    auth_logout(request)
+    return redirect('home')

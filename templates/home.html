@@ -15,30 +15,31 @@
 <section class="features">
     <h2>Features</h2>
     <div class="feature-cards">
-        <div class="card">
+        <!-- Wrap each card in an anchor tag -->
+        <a href="{% url 'pets_index' %}" class="card">
             <h3>Medical Records</h3>
             <p>Keep track of vet visits, diagnoses, and treatments.</p>
-        </div>
-        <div class="card">
+        </a>
+        <a href="{% url 'pets_index' %}" class="card">
             <h3>Vaccinations</h3>
             <p>Record vaccinations and never miss a booster shot.</p>
-        </div>
-        <div class="card">
+        </a>
+        <a href="{% url 'pets_index' %}" class="card">
             <h3>Feeding Schedule</h3>
             <p>Maintain consistent feeding times and amounts.</p>
-        </div>
-        <div class="card">
+        </a>
+        <a href="{% url 'pets_index' %}" class="card">
             <h3>Medications</h3>
             <p>Track current medications, dosages, and schedules.</p>
-        </div>
-        <div class="card">
+        </a>
+        <a href="{% url 'pets_index' %}" class="card">
             <h3>Training Progress</h3>
             <p>Monitor your pet's training achievements.</p>
-        </div>
-        <div class="card">
+        </a>
+        <a href="{% url 'pets_index' %}" class="card">
             <h3>Photo Gallery</h3>
             <p>Save precious memories of your furry friends.</p>
-        </div>
+        </a>
     </div>
 </section>
 {% endblock %}

@@ -1,30 +1,45 @@
-<!-- templates/pets/index.html -->
 {% extends 'base.html' %}
 {% block content %}
-<h1>My Pets</h1>
+<div class="pet-list-container">
+    <div class="pet-list-header">
+        <h1>My Pets</h1>
+    </div>
 
-<div class="pet-list">
-    {% for pet in pets %}
-        <div class="card pet-card">
-            <div class="pet-info">
-                {% if pet.profile_picture %}
-                    <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}" class="pet-thumbnail">
-                {% else %}
-                    <div class="pet-thumbnail placeholder">{{ pet.name.0 }}</div>
-                {% endif %}
-                <div>
-                    <h2>{{ pet.name }}</h2>
-                    <p>{{ pet.species }} • {{ pet.breed }}</p>
+    {% if pets %}
+        <div class="pet-list">
+            {% for pet in pets %}
+                <div class="pet-card">
+                    <div class="pet-card-content">
+                        <div class="pet-info">
+                            {% if pet.profile_picture %}
+                                <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}" class="pet-thumbnail">
+                            {% else %}
+                                <div class="pet-thumbnail placeholder">{{ pet.name.0 }}</div>
+                            {% endif %}
+                            <div class="pet-details">
+                                <h2>{{ pet.name }}</h2>
+                                <p>{{ pet.species }} • {{ pet.breed }}</p>
+                                <p>{{ pet.color }}</p>
+                            </div>
+                        </div>
+                        <div class="pet-card-actions">
+                            <a href="{% url 'pets_detail' pet.id %}" class="btn">View Details</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <a href="{% url 'pets_detail' pet.id %}" class="btn">View Details</a>
+            {% endfor %}
         </div>
-    {% empty %}
+    {% else %}
         <div class="no-pets">
             <p>You haven't added any pets yet!</p>
+            <a href="{% url 'pets_create' %}" class="btn">Add Your First Pet</a>
         </div>
-    {% endfor %}
-</div>
+    {% endif %}
 
-<a href="{% url 'pets_create' %}" class="btn add-pet-btn">Add a New Pet</a>
+    {% if pets %}
+        <div class="add-pet-container">
+            <a href="{% url 'pets_create' %}" class="btn add-pet-btn">Add New Pet</a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

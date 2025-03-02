@@ -12,7 +12,7 @@
         <div class="pet-info">
             <h1>{{ pet.name }}</h1>
             <p>{{ pet.species }} • {{ pet.breed }}</p>
-            <p>Born: {{ pet.date_of_birth }}</p>
+            <p>{{ pet.color }} • Born: {{ pet.date_of_birth }}</p>
             <p>Weight: {{ pet.weight }} lbs</p>
             <div class="pet-actions">
                 <a href="{% url 'pets_update' pet.id %}" class="btn">Edit Pet</a>
@@ -29,6 +29,7 @@
             <li><a href="#medications">Medications</a></li>
             <li><a href="#training">Training</a></li>
             <li><a href="#photos">Photos</a></li>
+            <li><a href="#calendar">Calendar</a></li>
         </ul>
         
         <div id="info" class="tab-content">
@@ -39,6 +40,35 @@
         
         <div id="medical" class="tab-content" style="display: none;">
             <h2>Medical Records</h2>
+            
+            <!-- Upcoming Reminders Section -->
+            <div class="upcoming-reminders">
+                <h3>Upcoming Vaccinations</h3>
+                
+                {% for vaccination in vaccinations %}
+                    {% if vaccination.next_due_date|date:"Y-m-d" <= today_plus_30|date:"Y-m-d" %}
+                        <div class="upcoming-reminder {% if vaccination.next_due_date|date:"Y-m-d" <= today_plus_7|date:"Y-m-d" %}urgent{% endif %}">
+                            <svg class="reminder-icon {% if vaccination.next_due_date|date:"Y-m-d" <= today_plus_7|date:"Y-m-d" %}urgent{% endif %}" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21,11C21,16.55 17.16,21.74 12,23C6.84,21.74 3,16.55 3,11V5L12,1L21,5V11M12,21C15.75,20 19,15.54 19,11.22V6.3L12,3.18L5,6.3V11.22C5,15.54 8.25,20 12,21M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9"></path>
+                            </svg>
+                            <div>
+                                <strong>{{ vaccination.vaccine_name }}</strong> is due
+                                {% if vaccination.next_due_date|date:"Y-m-d" <= today|date:"Y-m-d" %}
+                                    <span class="badge urgent">Overdue</span>
+                                {% elif vaccination.next_due_date|date:"Y-m-d" <= today_plus_7|date:"Y-m-d" %}
+                                    <span class="badge warning">Due soon</span>
+                                {% else %}
+                                    <span class="badge">Upcoming</span>
+                                {% endif %}
+                            </div>
+                            <span class="reminder-date">{{ vaccination.next_due_date }}</span>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <p>No upcoming vaccinations.</p>
+                {% endfor %}
+            </div>
+            
             <a href="#" class="btn add-record-btn">Add Medical Record</a>
             
             <div class="add-form" style="display: none;">
@@ -111,11 +141,27 @@
             </div>
         </div>
         
-        <!-- Similar tab content sections for medications, training, and photos -->
-        <!-- I'll add just one more as an example, you'd create similar sections for the other tabs -->
-        
         <div id="medications" class="tab-content" style="display: none;">
             <h2>Medications</h2>
+            
+            <!-- Current Medications Reminders -->
+            <div class="upcoming-reminders">
+                {% for medication in medications %}
+                    {% if medication.end_date|date:"Y-m-d" >= today|date:"Y-m-d" %}
+                        <div class="upcoming-reminder">
+                            <svg class="reminder-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20,6A2,2 0 0,1 22,8V12A2,2 0 0,1 20,14H18V17A1,1 0 0,1 17,18H16V21H4V18H3A1,1 0 0,1 2,17V8A2,2 0 0,1 4,6H20M20,8H4V17H6V13H13V17H16V14H18V12H20V8Z"></path>
+                            </svg>
+                            <div>
+                                <strong>{{ medication.medication_name }}</strong> ({{ medication.dosage }})
+                                <div>{{ medication.frequency }} at {{ medication.time_of_day }}</div>
+                            </div>
+                            <span class="reminder-date">Until {{ medication.end_date }}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
             <a href="#" class="btn add-medication-btn">Add Medication</a>
             
             <div class="add-form" style="display: none;">
@@ -151,7 +197,109 @@
             </div>
         </div>
         
-        <!-- Add similar sections for training and photos -->
+        <!-- Training Tab with Progress Bars -->
+        <div id="training" class="tab-content" style="display: none;">
+            <h2>Training Progress</h2>
+            
+            <a href="#" class="btn add-training-btn">Add Training Skill</a>
+            
+            <div class="add-form" style="display: none;">
+                <form action="{% url 'add_training_progress' pet.id %}" method="POST">
+                    {% csrf_token %}
+                    {{ training_progress_form.as_p }}
+                    <input type="submit" value="Add Training Skill" class="btn">
+                </form>
+            </div>
+            
+            {% if training_progress %}
+                <div class="training-list">
+                    {% for skill in training_progress %}
+                        <div class="training-progress">
+                            <div class="skill-header">
+                                <h3>{{ skill.skill }}</h3>
+                                <span class="training-status status-{{ skill.status }}">{{ skill.get_status_display }}</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar progress-{{ skill.status }}"></div>
+                            </div>
+                            <div class="skill-details">
+                                <span>Started: {{ skill.start_date }}</span>
+                                {% if skill.notes %}
+                                    <p>{{ skill.notes }}</p>
+                                {% endif %}
+                                <div class="card-actions">
+                                    <a href="{% url 'training_progress_update' skill.id %}" class="btn btn-sm">Edit</a>
+                                    <a href="{% url 'training_progress_delete' skill.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No training skills recorded yet.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Photos Tab -->
+        <div id="photos" class="tab-content" style="display: none;">
+            <h2>Photo Gallery</h2>
+            
+            <a href="#" class="btn add-photo-btn">Add Photo</a>
+            
+            <div class="add-form" style="display: none;">
+                <form action="{% url 'add_photo' pet.id %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ photo_form.as_p }}
+                    <input type="submit" value="Add Photo" class="btn">
+                </form>
+            </div>
+            
+            {% if photos %}
+                <div class="photo-grid">
+                    {% for photo in photos %}
+                        <div class="photo-item">
+                            <img src="{{ photo.image_file.url }}" alt="{{ photo.caption }}" class="photo-img">
+                            <div class="photo-caption">
+                                {% if photo.caption %}{{ photo.caption }}{% else %}{{ photo.date_taken }}{% endif %}
+                                <a href="{% url 'photos_delete' photo.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No photos yet.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Calendar Tab -->
+        <div id="calendar" class="tab-content" style="display: none;">
+            <h2>Upcoming Appointments</h2>
+            
+            <div class="calendar">
+                <div class="calendar-header">
+                    <button class="btn btn-sm prev-month">Previous</button>
+                    <h3 id="current-month">March 2025</h3>
+                    <button class="btn btn-sm next-month">Next</button>
+                </div>
+                
+                <div class="weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                
+                <div class="calendar-grid" id="calendar-days">
+                    <!-- Days will be generated by JavaScript -->
+                    <div class="calendar-loading">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -181,7 +329,7 @@
         });
         
         // Show/hide add forms
-        const addButtons = document.querySelectorAll('.add-record-btn, .add-feeding-btn, .add-medication-btn');
+        const addButtons = document.querySelectorAll('.add-record-btn, .add-feeding-btn, .add-medication-btn, .add-training-btn, .add-photo-btn');
         addButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -189,6 +337,132 @@
                 form.style.display = form.style.display === 'none' ? 'block' : 'none';
             });
         });
+
+        // Calendar functionality
+        const calendarEl = document.getElementById('calendar-days');
+        const monthEl = document.getElementById('current-month');
+        const prevBtn = document.querySelector('.prev-month');
+        const nextBtn = document.querySelector('.next-month');
+        
+        let currentDate = new Date();
+        
+        // Event data from Django template
+        const events = [
+            {% for vaccination in vaccinations %}
+                {
+                    title: "Vaccination: {{ vaccination.vaccine_name }}",
+                    date: "{{ vaccination.next_due_date|date:'Y-m-d' }}",
+                    type: "vaccination"
+                },
+            {% endfor %}
+            {% for medication in medications %}
+                {
+                    title: "Medication: {{ medication.medication_name }}",
+                    date: "{{ medication.start_date|date:'Y-m-d' }}",
+                    type: "medication"
+                },
+            {% endfor %}
+            {% for record in medical_records %}
+                {
+                    title: "{{ record.record_type }}",
+                    date: "{{ record.record_date|date:'Y-m-d' }}",
+                    type: "medical"
+                },
+            {% endfor %}
+        ];
+        
+        function renderCalendar(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            
+            // Update month display
+            const monthNames = ["January", "February", "March", "April", "May", "June", 
+                            "July", "August", "September", "October", "November", "December"];
+            monthEl.textContent = `${monthNames[month]} ${year}`;
+            
+            // Get first day of month and last day
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            // Clear previous calendar
+            calendarEl.innerHTML = '';
+            
+            // Add empty cells for days before first day of month
+            const firstDayIndex = firstDay.getDay();
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day empty';
+                calendarEl.appendChild(emptyCell);
+            }
+            
+            // Add days of month
+            const today = new Date();
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                
+                const dayNumber = document.createElement('div');
+                
+                // Check if it's today
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+                    dayNumber.className = 'day-number current-day';
+                } else {
+                    dayNumber.className = 'day-number';
+                }
+                
+                dayNumber.textContent = i;
+                dayCell.appendChild(dayNumber);
+                
+                // Add events for this day
+                const currentDateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const dayEvents = events.filter(event => event.date === currentDateStr);
+                
+                dayEvents.forEach(event => {
+                    const eventEl = document.createElement('div');
+                    eventEl.className = `calendar-event event-${event.type}`;
+                    eventEl.textContent = event.title;
+                    dayCell.appendChild(eventEl);
+                });
+                
+                calendarEl.appendChild(dayCell);
+            }
+        }
+        
+        // Initial render
+        renderCalendar(currentDate);
+        
+        // Navigation
+        prevBtn.addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate);
+        });
+        
+        nextBtn.addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate);
+        });
+        
+        // Add loading indicators
+        document.querySelectorAll('form').forEach(form => {
+          form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('input[type="submit"]');
+            submitBtn.value = 'Processing...';
+            submitBtn.disabled = true;
+          });
+        });
+        
+        // Smooth scrolling for tab navigation
+        document.querySelectorAll('.tabs-nav a').forEach(anchor => {
+          anchor.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              window.scrollTo({
+                top: target.offsetTop - 100,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
     });
 </script>
-{% endblock %}  
+{% endblock %}

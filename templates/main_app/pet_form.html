@@ -3,6 +3,13 @@
 <div class="form-container">
     <h1>{% if object %}Update {{ object.name }}{% else %}Add New Pet{% endif %}</h1>
     
+    {% if form.errors %}
+    <div class="error-message">
+        <p>Please correct the following errors:</p>
+        {{ form.errors }}
+    </div>
+    {% endif %}
+    
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}

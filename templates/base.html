@@ -7,6 +7,9 @@
     <title>Pet Care Tracker</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 </head>
 <body>
     <header>
@@ -19,8 +22,8 @@
                         <li><a href="{% url 'pets_index' %}">My Pets</a></li>
                         <li><a href="{% url 'logout' %}">Log Out</a></li>
                     {% else %}
-                        <li><a href="{% url 'login' %}">Log In</a></li>
-                        <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                    <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    <li><a href="{% url 'signup' %}">Sign Up</a></li>
                     {% endif %}
                 </ul>
             </div>
