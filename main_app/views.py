@@ -9,9 +9,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Pet, MedicalRecord, Vaccination, FeedingSchedule, Medication, TrainingProgress, Photo
 from .forms import MedicalRecordForm, VaccinationForm, FeedingScheduleForm, MedicationForm, TrainingProgressForm, PhotoForm
 from datetime import date, timedelta
+from django.db.models import Q
+from .models import Veterinarian, Appointment
 
 def home(request):
-    return render(request, 'home.html')
+    # 3 featured vets (highest rated)
+    featured_vets = Veterinarian.objects.all().order_by('-rating')[:3]
+    
+    return render(request, 'home.html', {
+        'featured_vets': featured_vets
+    })
 
 def about(request):
     return render(request, 'about.html')
@@ -360,3 +367,86 @@ class PhotoDelete(LoginRequiredMixin, DeleteView):
 def logout_view(request):
     auth_logout(request)
     return redirect('home')
+
+def vets_index(request):
+    """Display all veterinarians or filtered results"""
+    search_query = request.GET.get('q', '')
+    specialty = request.GET.get('specialty', '')
+    
+    vets = Veterinarian.objects.all()
+    
+    # Apply filters if provided
+    if search_query:
+        vets = vets.filter(
+            Q(name__icontains=search_query) |
+            Q(clinic_name__icontains=search_query) |
+            Q(city__icontains=search_query) |
+            Q(zip_code__icontains=search_query)
+        )
+    
+    if specialty:
+        vets = vets.filter(specialty=specialty)
+    
+    context = {
+        'vets': vets,
+        'search_query': search_query,
+        'specialty': specialty
+    }
+    
+    return render(request, 'vets/index.html', context)
+
+def vets_detail(request, vet_id):
+    """Display details for a specific veterinarian"""
+    vet = Veterinarian.objects.get(id=vet_id)
+    
+    # If user is authenticated, get their pets for the appointment form
+    pets = None
+    if request.user.is_authenticated:
+        pets = Pet.objects.filter(user=request.user)
+    
+    context = {
+        'vet': vet,
+        'pets': pets
+    }
+    
+    return render(request, 'vets/detail.html', context)
+
+@login_required
+def add_appointment(request, vet_id):
+    """Add an appointment with a vet"""
+    if request.method == 'POST':
+        pet_id = request.POST.get('pet')
+        date = request.POST.get('date')
+        time = request.POST.get('time')
+        reason = request.POST.get('reason')
+        notes = request.POST.get('notes', '')
+        
+        # Create new appointment
+        appointment = Appointment(
+            pet_id=pet_id,
+            veterinarian_id=vet_id,
+            date=date,
+            time=time,
+            reason=reason,
+            notes=notes
+        )
+        appointment.save()
+        
+        return redirect('vets_detail', vet_id=vet_id)
+    
+    return redirect('vets_detail', vet_id=vet_id)
+
+@login_required
+def appointments_index(request):
+    """View user's appointments"""
+    # Get pets belonging to the logged-in user
+    pets = Pet.objects.filter(user=request.user)
+    
+    # Get appointments for these pets
+    appointments = Appointment.objects.filter(pet__in=pets).order_by('date', 'time')
+    
+    context = {
+        'appointments': appointments
+    }
+    
+    return render(request, 'appointments/index.html', context)

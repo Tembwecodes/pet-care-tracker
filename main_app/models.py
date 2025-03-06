@@ -113,3 +113,44 @@ class Photo(models.Model):
     
     class Meta:
         ordering = ['-date_taken']
+
+   # main_app/models.py
+# veterinarians model
+
+class Veterinarian(models.Model):
+    name = models.CharField(max_length=100)
+    specialty = models.CharField(max_length=100)
+    clinic_name = models.CharField(max_length=200)
+    address = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    bio = models.TextField(blank=True)
+    profile_picture = models.ImageField(upload_to='vets/', blank=True)
+    rating = models.DecimalField(max_digits=3, decimal_places=1, default=0.0)
+    
+    def __str__(self):
+        return self.name     
+    
+  # main_app/models.py
+# Appointment model
+
+class Appointment(models.Model):
+    APPOINTMENT_STATUS = (
+        ('scheduled', 'Scheduled'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    )
+    
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    veterinarian = models.ForeignKey(Veterinarian, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    reason = models.CharField(max_length=255)
+    notes = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=APPOINTMENT_STATUS, default='scheduled')
+    
+    def __str__(self):
+        return f"{self.pet.name} with {self.veterinarian.name} on {self.date} at {self.time}"  

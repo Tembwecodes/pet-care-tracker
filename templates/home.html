@@ -46,4 +46,74 @@
         </div>
     </div>
 </section>
+
+<!-- Add this to templates/home.html -->
+<!-- Vet Finder Section -->
+<section class="vet-finder">
+    <div class="section-container">
+      <h2>Find & Book Veterinarians</h2>
+      <p>Quickly find available veterinarians in your area and book appointments directly through our platform.</p>
+      
+      <div class="search-container">
+        <form class="vet-search-form" action="{% url 'vets_index' %}" method="GET">
+          <div class="search-input-group">
+            <input type="text" name="q" placeholder="Enter your location or zip code" class="location-input">
+            <select name="specialty" class="specialty-select">
+              <option value="">All Specialties</option>
+              <option value="general">General Practice</option>
+              <option value="emergency">Emergency Care</option>
+              <option value="dental">Dental</option>
+              <option value="dermatology">Dermatology</option>
+              <option value="surgery">Surgery</option>
+            </select>
+            <button type="submit" class="search-btn">Find Vets</button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Featured vets preview -->
+      <div class="featured-vets">
+        <h3>Featured Veterinarians</h3>
+        <div class="vet-cards">
+          {% for vet in featured_vets %}
+            <div class="vet-card">
+              {% if vet.profile_picture %}
+                <img src="{{ vet.profile_picture.url }}" alt="{{ vet.name }}">
+              {% else %}
+                <div class="vet-placeholder">{{ vet.name.0 }}</div>
+              {% endif %}
+              <h4>{{ vet.name }}</h4>
+              <p>{{ vet.specialty }} • {{ vet.rating }} ★</p>
+              <p class="vet-location">{{ vet.clinic_name }}</p>
+              <a href="{% url 'vets_detail' vet.id %}" class="btn btn-sm">View Profile</a>
+            </div>
+          {% empty %}
+            <!-- Placeholder static content for when no vets are in the system yet -->
+            <div class="vet-card">
+              <div class="vet-placeholder">S</div>
+              <h4>Dr. Sarah Smith</h4>
+              <p>General Practice • 4.9 ★</p>
+              <p class="vet-location">Downtown Pet Clinic</p>
+              <a href="{% url 'vets_index' %}" class="btn btn-sm">Find Vets</a>
+            </div>
+            <div class="vet-card">
+              <div class="vet-placeholder">M</div>
+              <h4>Dr. Michael Johnson</h4>
+              <p>Surgery • 4.8 ★</p>
+              <p class="vet-location">Westside Animal Hospital</p>
+              <a href="{% url 'vets_index' %}" class="btn btn-sm">Find Vets</a>
+            </div>
+            <div class="vet-card">
+              <div class="vet-placeholder">E</div>
+              <h4>Dr. Elena Garcia</h4>
+              <p>Emergency Care • 4.7 ★</p>
+              <p class="vet-location">24/7 Pet Emergency</p>
+              <a href="{% url 'vets_index' %}" class="btn btn-sm">Find Vets</a>
+            </div>
+          {% endfor %}
+        </div>
+        <a href="{% url 'vets_index' %}" class="view-all-link">View all veterinarians →</a>
+      </div>
+    </div>
+  </section>
 {% endblock %}

@@ -41,4 +41,10 @@ urlpatterns = [
     # Photos
     path('pets/<int:pet_id>/add_photo/', views.add_photo, name='add_photo'),
     path('photos/<int:pk>/delete/', views.PhotoDelete.as_view(), name='photos_delete'),
+    
+    # Aveterian and appontment
+    path('vets/', views.vets_index, name='vets_index'),
+    path('vets/<int:vet_id>/', views.vets_detail, name='vets_detail'),
+    path('vets/<int:vet_id>/add_appointment/', views.add_appointment, name='add_appointment'),
+    path('appointments/', views.appointments_index, name='appointments_index'),
 ]

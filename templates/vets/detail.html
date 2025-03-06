@@ -1,0 +1,76 @@
+<!-- templates/vets/detail.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="vet-detail-container">
+    <div class="vet-header">
+        {% if vet.profile_picture %}
+            <img src="{{ vet.profile_picture.url }}" alt="{{ vet.name }}" class="vet-profile-img">
+        {% else %}
+            <div class="vet-profile-placeholder">{{ vet.name.0 }}</div>
+        {% endif %}
+        
+        <div class="vet-info">
+            <h1>{{ vet.name }}</h1>
+            <p class="vet-specialty">{{ vet.specialty }} • {{ vet.rating }} ★</p>
+            <p class="vet-clinic">{{ vet.clinic_name }}</p>
+            <p class="vet-address">{{ vet.address }}, {{ vet.city }}, {{ vet.state }} {{ vet.zip_code }}</p>
+            <p class="vet-contact">{{ vet.phone }} • {{ vet.email }}</p>
+        </div>
+    </div>
+    
+    <div class="vet-content">
+        <div class="vet-bio">
+            <h2>About</h2>
+            <p>{{ vet.bio }}</p>
+        </div>
+        
+        {% if user.is_authenticated %}
+            <div class="appointment-section">
+                <h2>Book an Appointment</h2>
+                
+                {% if pets %}
+                    <form action="{% url 'add_appointment' vet.id %}" method="POST" class="appointment-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="pet">Select Pet</label>
+                            <select name="pet" id="pet" required>
+                                {% for pet in pets %}
+                                    <option value="{{ pet.id }}">{{ pet.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" name="date" id="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="time" name="time" id="time" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reason">Reason for Visit</label>
+                            <input type="text" name="reason" id="reason" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">Notes</label>
+                            <textarea name="notes" id="notes"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Book Appointment</button>
+                    </form>
+                {% else %}
+                    <p>You need to add a pet before booking an appointment. <a href="{% url 'pets_create' %}">Add a pet</a></p>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="login-prompt">
+                <p>Please <a href="{% url 'login' %}">log in</a> to book an appointment.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

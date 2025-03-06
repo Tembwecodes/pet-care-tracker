@@ -1,0 +1,49 @@
+<!-- templates/vets/index.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="vets-container">
+    <h1>Find a Veterinarian</h1>
+    
+    <div class="search-container">
+        <form class="vet-search-form" method="GET" action="{% url 'vets_index' %}">
+            <div class="search-input-group">
+                <input type="text" name="q" placeholder="Search by name, clinic, city or zip" class="location-input" value="{{ search_query }}">
+                <select name="specialty" class="specialty-select">
+                    <option value="">All Specialties</option>
+                    <option value="general" {% if specialty == 'general' %}selected{% endif %}>General Practice</option>
+                    <option value="emergency" {% if specialty == 'emergency' %}selected{% endif %}>Emergency Care</option>
+                    <option value="dental" {% if specialty == 'dental' %}selected{% endif %}>Dental</option>
+                    <option value="dermatology" {% if specialty == 'dermatology' %}selected{% endif %}>Dermatology</option>
+                    <option value="surgery" {% if specialty == 'surgery' %}selected{% endif %}>Surgery</option>
+                </select>
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="vet-results">
+        {% if vets %}
+            <div class="vet-cards">
+                {% for vet in vets %}
+                    <div class="vet-card">
+                        {% if vet.profile_picture %}
+                            <img src="{{ vet.profile_picture.url }}" alt="{{ vet.name }}">
+                        {% else %}
+                            <div class="vet-placeholder">{{ vet.name.0 }}</div>
+                        {% endif %}
+                        <h4>{{ vet.name }}</h4>
+                        <p>{{ vet.specialty }} • {{ vet.rating }} ★</p>
+                        <p class="vet-location">{{ vet.clinic_name }}</p>
+                        <p class="vet-address">{{ vet.city }}, {{ vet.state }}</p>
+                        <a href="{% url 'vets_detail' vet.id %}" class="btn btn-sm">View Profile</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <p>No veterinarians matching your search criteria.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
